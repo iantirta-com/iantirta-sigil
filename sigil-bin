@@ -1,0 +1,13 @@
+#!/usr/bin/env python3
+
+import odoo_patches
+
+odoo_patches.patch_init()
+
+import odoo.cli as odoo_cli
+
+
+if __name__ == "__main__":
+    # odoo_cli.main()
+    import odoo
+    print(odoo.release.author)
