@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 
-import odoo_patches
+import _monkeypatches
 
-odoo_patches.patch_init()
+_monkeypatches.patch_init()
 
 import odoo.cli as odoo_cli
 
-
 if __name__ == "__main__":
-    # odoo_cli.main()
     import odoo
-    print(odoo.release.author)
+    print("ROOTS", odoo.tools.convert.xml_import.DATA_ROOTS)
+    odoo_cli.main()

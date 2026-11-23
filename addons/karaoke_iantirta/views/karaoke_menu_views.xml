@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sigil>
+
+    <!-- Binding Actions -->
+    <record id="reset_karaoke_task_action" model="ir.actions.client">
+        <field name="name">Reset Task</field>
+        <field name='tag'>karaoke_reset_tasks</field>
+        <field name="binding_model_id" ref="model_karaoke_karaoke"/>
+    </record>
+
+    <record id="refresh_information_karaoke_task_action" model="ir.actions.client">
+        <field name="name">Refresh Song Info</field>
+        <field name='tag'>karaoke_refresh_song_info</field>
+        <field name="binding_model_id" ref="model_karaoke_karaoke"/>
+    </record>
+
+    <record id="karaoke_karaoke_view_form" model="ir.ui.view">
+        <field name="name">karaoke.karaoke.form</field>
+        <field name="model">karaoke.karaoke</field>
+        <field name="arch" type="xml">
+            <form string="Karaoke Task" duplicate="false">
+                <header>
+                    <field
+                        name="status"
+                        widget="statusbar"
+                        statusbar_visible="waiting,processing,completed"
+                    />
+                </header>
+                <sheet string="Song">
+                    <separator string="Song" style="margin-top: 0 !important;"/>
+                    <div class="d-flex justify-content-between flex-column flex-sm-row gap-2" style="margin-bottom: 20px;">
+                        <div>
+                            <field
+                                name="thumbnail_url"
+                                widget="image_url"
+                                class="text-start"
+                                options="{'size': [0,90],}"
+                            />
+                        </div>
+                        <div class="flex-fill w-100">
+                            <field class="h5" name="title" placeholder="track name.."/>
+                            <field name="artist"/>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <field name="karaoke_type" widget="badge"/>
+                                <field name="duration" class="badge"/>
+                                <field name="status" widget="badge"
+                                    decoration-success="status == 'completed'"
+                                    decoration-info="status == 'waiting'"
+                                    decoration-warning="status == 'processing'"
+                                    decoration-danger="status == 'failed'"/>
+                                <field name="extraction_status" widget="badge"
+                                    decoration-success="extraction_status == 'extraction_success'"
+                                    decoration-warning="extraction_status == 'need_extraction'"
+                                    decoration-danger="extraction_status == 'extraction_failed'"/>
+                            </div>
+                        </div>
+                    </div>
+                    <group>
+                        <group colspan="2">
+                            <field name="source_url" widget="url" readonly="id != False"/>
+                            <field name="karaoke_type"/>
+                            <field name="download_uris" widget="karaoke_download_uris"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Video Information">
+                            <group>
+                                <group colspan="2">
+                                    <field name="title" placeholder="track name.." readonly="false"/>
+                                    <field name="artist" placeholder="artist name.." readonly="false"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Lyric">
+                            <field name="lyric" placeholder="Generated lyrics..."/>
+                        </page>
+                        <page string="Log and Debug">
+                            <group>
+                                <group colspan='2'>
+                                    <field name="log_entries" widget='log_entries'/>
+                                    <field name="error_entries" widget='error_entries'/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Note" name="internal_notes">
+                            <group>
+                                <group colspan="2">
+                                    <field name="note" nolabel="1" placeholder="Internal notes..."/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_karaoke_karaoke_search" model="ir.ui.view">
+        <field name="name">karaoke.karaoke.search</field>
+        <field name="model">karaoke.karaoke</field>
+        <field name="arch" type="xml">
+            <search string="Karaoke">
+                <field name="title" string="Song Title"/>
+                <field name="artist" string="Artist"/>
+                <field name="source_url"/>
+                <field name="karaoke_type" string="Karaoke Type"/>
+                <field name="status"/>
+                <separator/>
+                <filter
+                    name="filter_waiting"
+                    string="Waiting"
+                    domain="[('status', '=', 'waiting')]"
+                />
+                <filter
+                    name="filter_processing"
+                    string="Processing"
+                    domain="[('status', '=', 'processing')]"
+                />
+                <filter
+                    name="filter_completed"
+                    string="Completed"
+                    domain="[('status', '=', 'completed')]"
+                />
+                <filter
+                    name="filter_failed"
+                    string="Failed"
+                    domain="[('status', '=', 'failed')]"
+                />
+                <group>
+                    <filter
+                        name="group_status"
+                        string="Status"
+                        context="{'group_by': 'status'}"
+                    />
+                    <filter
+                        name="group_type"
+                        string="Karaoke Type"
+                        context="{'group_by': 'karaoke_type'}"
+                    />
+                    <filter
+                        name="group_artist"
+                        string="Artist"
+                        context="{'group_by': 'artist'}"
+                    />
+                </group>
+                
+            </search>
+        </field>
+    </record>
+
+    <record id="karaoke_karaoke_view_tree" model="ir.ui.view">
+        <field name="name">karaoke.karaoke.list</field>
+        <field name="model">karaoke.karaoke</field>
+        <field name="arch" type="xml">
+            <list string="Karaoke Task" duplicate="false" js_class="karaoke_list_view">
+                <!-- Required for js -->
+                <field name='download_uris' invisible='true'/>
+                <field name="title"/>
+                <field name="artist"/>
+                <field name="karaoke_type" widget="badge"/>
+                <field name="status" widget="badge"
+                    decoration-success="status == 'completed'"
+                    decoration-info="status == 'waiting'"
+                    decoration-warning="status == 'processing'"
+                    decoration-danger="status == 'failed'"/>
+                <field name="duration" widget="float_time" options="{'display_seconds':'1'}"/>
+                <field name="source_url" widget="url"/>
+                <field name="write_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_karaoke_karaoke_kanban" model="ir.ui.view">
+        <field name="name">karaoke.karaoke.kanban</field>
+        <field name="model">karaoke.karaoke</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="status">
+                <field name="title"/>
+                <field name="artist"/>
+                <field name="karaoke_type"/>
+                <field name="status"/>
+                <field name="duration"/>
+                <field name="source_url"/>
+                <templates>
+                    <t t-name="card">
+                        <aside>
+                            <field
+                                name="thumbnail_url"
+                                widget="image_url"
+                                class="text-start"
+                            />
+                        </aside>
+                        <main>
+                            <field name="status" widget="badge"/>
+                            <div class="mt-2 d-flex flex-column">
+                                <field name="title" class="h5"/>
+                                <field name="artist" class="text-muted"/>
+                            </div>
+                            <div class="my-2 d-flex justify-content-between align-items-center">
+                                <field name="karaoke_type" widget="badge"/>
+                                <field name="duration" widget="float_time" options="{'display_seconds':'1'}"/>
+                            </div>
+                            <field class="small" name="source_url" widget="url"/>
+                        </main>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="karaoke_task_action" model="ir.actions.act_window">
+        <field name="name">Karaoke Task</field>
+        <field name="res_model">karaoke.karaoke</field>
+        <field name="path">karaoke-task</field>
+        <field name='view_mode'>list,kanban,form</field>
+        <field name="search_view_id" ref="view_karaoke_karaoke_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first karaoke task
+            </p>
+        </field>
+    </record>
+    
+    <menuitem
+        id="karaoke_root"
+        name="Karaoke"
+    />
+
+    <menuitem
+        id="karaoke_task"
+        name="Karaoke Task"
+        parent="karaoke_root"
+        action="karaoke_task_action"
+    />
+
+</sigil>

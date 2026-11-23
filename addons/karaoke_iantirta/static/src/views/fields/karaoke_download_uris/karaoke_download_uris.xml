@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="karaoke_iantirta.KaraokeDownloadUris">
+        <t t-if="totalFilesCount > 0">
+            <t t-set="isThisRecordDownloading" t-value="state.isDownloading and state.activeResId === props.record.resId"/>
+            <t t-set="isOtherRecordDownloading" t-value="state.isDownloading and state.activeResId !== props.record.resId"/>
+
+            <div class="d-flex align-items-center">
+                <button type="button" 
+                        class="btn btn-primary" 
+                        t-on-click="onClickDownload"
+                        t-att-disabled="state.isDownloading">
+                    
+                    <t t-if="isThisRecordDownloading">
+                        <i class="fa fa-spinner fa-spin me-1"/> Downloading...
+                    </t>
+                    <t t-elif="isOtherRecordDownloading">
+                        <i class="fa fa-hourglass-half me-1"/> Background Download Active...
+                    </t>
+                    <t t-else="">
+                        <i class="fa fa-download me-1"/> Download Video (<t t-esc="totalFilesCount"/> chunks)
+                    </t>
+                </button>
+                
+                <span t-if="isThisRecordDownloading" class="ms-3 text-muted">
+                    <t t-if="state.isMerging">
+                        Merging chunks into video file...
+                    </t>
+                    <t t-else="">
+                        <t t-esc="formatBytes(state.downloadedBytes)"/> 
+                        <t t-if="state.totalBytes > 0">
+                            / <t t-esc="formatBytes(state.totalBytes)"/>
+                        </t>
+                        (<t t-esc="state.progressPercent"/>%)
+                    </t>
+                </span>
+                
+                <span t-if="state.errorMessage and isThisRecordDownloading" class="ms-3 text-danger">
+                    <i class="fa fa-exclamation-triangle me-1"/> <t t-esc="state.errorMessage"/>
+                </span>
+            </div>
+
+            <!-- Progress Bar -->
+             <t t-if="isThisRecordDownloading and !state.isMerging">
+                <div class="progress mt-2" style="height: 10px; max-width: 400px;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+                         role="progressbar"
+                         t-attf-style="width: {{ state.progressPercent }}%;"
+                         t-att-aria-valuenow="state.progressPercent"
+                         aria-valuemin="0"
+                         aria-valuemax="100">
+                    </div>
+                </div>
+            </t>
+        </t>
+        <t t-else="">
+            <span class="text-muted">No video files available.</span>
+        </t>
+    </t>
+</templates>

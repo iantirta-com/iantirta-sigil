@@ -1,0 +1,10 @@
+id,name,model_id,group_id/id,operation,domain
+access_karaoke_karaoke_manager,karaoke.karaoke.manager,karaoke.karaoke,base.group_system,crud
+access_karaoke_batch_input_wizard,karaoke_batch_input_wizard,karaoke.batch.input.wizard,base.group_system,cru
+
+access_storage_storage_manager,storage_storage.manager,iantirta.cloud.storage,base.group_system,crud
+
+access_gpu_worker_manager,gpu_worker.manager,gpu.worker,base.group_system,crud
+access_gpu_worker_log_manager,gpu_worker.log.manager,gpu.worker.log,base.group_system,crud
+
+access_worker_notebook_manager,worker_notebook.manager,worker.notebook,base.group_system,crud

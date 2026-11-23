@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rng:grammar xmlns:rng="http://relaxng.org/ns/structure/1.0"
+        datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+    <rng:include href="file:///d:/iantirtacom/iantirta-sigil/.odoo/odoo/import_xml.rng">
+        <rng:define name="odoo_openerp_data">
+            <rng:element>
+                <rng:choice>
+                    <rng:name>sigil</rng:name>
+                    <rng:name>odoo</rng:name>
+                    <rng:name>openerp</rng:name>
+                    <rng:name>data</rng:name>
+                </rng:choice>
+                <rng:optional><rng:attribute name="noupdate" /></rng:optional>
+                <rng:optional><rng:attribute name="auto_sequence" /></rng:optional>
+                <rng:ref name="env"/>
+                <rng:zeroOrMore>
+                    <rng:choice>
+                        <rng:text/>
+                        <rng:ref name="odoo_openerp_data"/>
+                        <rng:ref name="menuitem" />
+                        <rng:ref name="record" />
+                        <rng:ref name="template" />
+                        <rng:ref name="asset" />
+                        <rng:ref name="delete" />
+                        <rng:ref name="function" />
+                    </rng:choice>
+                </rng:zeroOrMore>
+            </rng:element>
+        </rng:define>
+    </rng:include>
+</rng:grammar>
