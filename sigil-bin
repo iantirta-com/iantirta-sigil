@@ -7,6 +7,4 @@ _monkeypatches.patch_init()
 import odoo.cli as odoo_cli
 
 if __name__ == "__main__":
-    import odoo
-    print("ROOTS", odoo.tools.convert.xml_import.DATA_ROOTS)
     odoo_cli.main()

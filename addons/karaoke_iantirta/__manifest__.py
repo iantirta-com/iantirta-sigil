@@ -18,14 +18,12 @@ Long description of module's purpose
         },
     },
     'data': [
-        
-        
         'data/ir_cron_data.xml',
-        
+
         'views/webclient_templates.xml',
         "views/karaoke_menu_views.xml",
         'views/storage_storage_menu_views.xml',
-        
+
         "wizard/karaoke_batch_input.views.xml",
         "views/gpu_worker_menu_views.xml",
 

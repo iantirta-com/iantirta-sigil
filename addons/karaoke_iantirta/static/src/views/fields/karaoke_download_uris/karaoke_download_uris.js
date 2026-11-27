@@ -1,4 +1,4 @@
-import { Component, useState, useEffect, useExternalListener, useRef, markup } from "@sigil/owl";
+import { Component, proxy, useProps } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { _t } from "@web/core/l10n/translation";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
@@ -6,15 +6,17 @@ import { useService } from "@web/core/utils/hooks";
 import { humanSize } from "@web/core/utils/binary";
 
 
+const karaokeDownloadUrisProps = {
+    ...standardFieldProps,
+}
+
 class KaraokeDownloadUrisField extends Component {
     static template = "karaoke_iantirta.KaraokeDownloadUris";
-    static components = {}
-    static props = {
-        ...standardFieldProps,
-    }
+    static components = {};
+    props = useProps(karaokeDownloadUrisProps);
 
     setup() {
-        this.state = useState({
+        this.state = proxy({
             isDownloading: false,
             downloadedBytes: 0,
             totalBytes: 0,

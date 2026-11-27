@@ -1,8 +1,8 @@
 import re
 
-from odoo import _, api, models, fields, Command
-from odoo.exceptions import ValidationError
-from odoo.tools.float_utils import float_is_zero, float_round
+from odoo import _, fields, models
+
+URL_SPLIT_RE = re.compile(r"[,;\s]+")
 
 
 class KaraokeBatchInputWizard(models.TransientModel):
@@ -18,31 +18,41 @@ class KaraokeBatchInputWizard(models.TransientModel):
     def action_on_click_create(self):
         self.ensure_one()
 
-        inputted_urls = [
-            url.strip()
-            for url in re.split(r'[,;]', self.youtube_urls)
+        raw_urls = [
+            url.strip().rstrip("/")
+            for url in URL_SPLIT_RE.split(self.youtube_urls or "")
             if url.strip()
         ]
-        existing_karaokes = set(
-            self.env["karaoke.karaoke"].sudo().search([]).mapped("source_url")
-        )
+        inputted_urls = set(raw_urls)
 
-        to_create: list[dict] = [
+        existing_records = self.env["karaoke.karaoke"].sudo().search_read(
+            domain=[("source_url", "in", list(inputted_urls))],
+            fields=["source_url"],
+        )
+        existing_urls = {rec["source_url"] for rec in existing_records}
+
+        to_create = [
             {"source_url": url, "karaoke_type": self.karaoke_type}
             for url in inputted_urls
-            if url not in existing_karaokes
+            if url not in existing_urls
         ]
-        karaokes = self.env["karaoke.karaoke"].create(to_create)
+
+        created_count = 0
+        if to_create:
+            karaokes = self.env["karaoke.karaoke"].create(to_create)
+            created_count = len(karaokes)
+
+        duplicate_count = len(raw_urls) - created_count
 
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
                 'message': _(
-                    f'Created karaoke task total of {len(karaokes)}. '
-                    f'duplicated ({len(karaokes) - len(inputted_urls)})'
-                ),
-                'type': 'success',
+                "Created %(created)s karaoke task(s). Duplicated: %(dup)s."
+                )
+                % {"created": created_count, "dup": duplicate_count},
+                "type": "success" if created_count else "warning",
                 'sticky': False,
                 'next': {'type': 'ir.actions.act_window_close'},
             }

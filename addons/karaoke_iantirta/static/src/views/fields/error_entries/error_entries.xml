@@ -2,7 +2,7 @@
 <templates xml:space="preserve">
     <t t-name="karaoke_iantirta.ErrorEntriesField">
         <pre class="d-flex flex-column p-2 m-0 gap-2">
-            <t t-if="errors.length > 0">
+            <t t-if="this.errors.length > 0">
                 <div class="card card-body" t-foreach="errors" t-as="error" t-key="error_index">
                     <h5 class="">
                         <b t-esc="error.name"/>

@@ -1,4 +1,4 @@
-import { Component, onWillRender, useEffect, useExternalListener, useRef, markup } from "@sigil/owl";
+import { Component, useProps } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { _t } from "@web/core/l10n/translation";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
@@ -7,9 +7,9 @@ import { stripAnsi } from "../ansi_utils";
 class LogEntriesField extends Component {
     static template = "karaoke_iantirta.LogEntriesField";
     static components = {}
-    static props = {
+    props = useProps({
         ...standardFieldProps,
-    }
+    });
 
     stripLogAnsi(text) {
         return stripAnsi(text);

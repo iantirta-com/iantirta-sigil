@@ -1,23 +1,16 @@
-import { Component, onWillRender, useEffect, useExternalListener, useRef, markup } from "@sigil/owl";
+import { Component, useProps } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { _t } from "@web/core/l10n/translation";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
-import { formatDate, formatDateTime } from "@web/views/fields/formatters";
-import {
-    deserializeDate,
-    deserializeDateTime,
-    serializeDate,
-    serializeDateTime,
-    parseDateTime,
-    parseDate,
-} from "@web/core/l10n/dates";
+import { formatDateTime } from "@web/views/fields/formatters";
+import { deserializeDateTime } from "@web/core/l10n/dates";
 
 class WorkerQuotaField extends Component {
     static template = "karaoke_iantirta.WorkerQuotaField";
     static components = {}
-    static props = {
+    props = useProps({
         ...standardFieldProps,
-    }
+    });
 
     setup() {
         this.isColab = this.props.record.data?.code === 'colab';
